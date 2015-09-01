@@ -16,4 +16,9 @@ typedef struct{
 	int J_pt;
 }DAY_EVENT;
 
+#define DEFAULT_K_PT 300
+#define DEFAULT_J_PT 10
+
+#define DAY_EVENT_FILE_NAME "day_event.csv"
+
 // #endif

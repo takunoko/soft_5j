@@ -1,34 +1,93 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "data_set.h"
 
-// $B%W%m%0%i%`K\BN$N=i4|2=(B
-void init_program(DAY, int){
-    // $BMp?t=i4|2=(B
+// プログラム本体の初期化
+void init_program(int tmp){
+    // 乱数初期化
     srand((unsigned)time(NULL));
-
 }
 
-// $B%@%$%9$r?6$k(B
+// 日付イベントの読み込み
+int load_day_event_data(DAY_EVENT day_event[], char *file_name){
+    FILE *fp;
+    fp = fopen(file_name, "r");
+    if(fp == NULL){
+        printf("Can not open %s file\n", file_name);
+    }
+
+    int K_pt, J_pt;
+    char K_sign, J_sign;
+    char e[200];
+    int ret;
+
+    char readline[300] = {'\0'};
+
+    int day_count = 0;
+    while(fgets(readline, 300, fp) != NULL){
+        if(readline[0] == '#' || readline[0] == '\n'){
+            // printf("skip\n");
+        }else{
+            // ,の前後にスペースがあるとうまくいかない仕様
+            // なんとか改良したい
+            sscanf(readline, "%[^,],%c,%d,%c,%d%*c", e, &K_sign, &K_pt, &J_sign, &J_pt);
+            printf( "event_name: %s\n\
+                    K_pt : %c %d\n\
+                    J_pt : %c %d\n", e, K_sign, K_pt, J_sign, J_pt);
+
+            K_pt = (K_sign == '-') ? K_pt*-1 : K_pt;
+            J_pt = (J_sign == '-') ? J_pt*-1 : J_pt;
+            strncpy(day_event[day_count].content, e, 200);
+            day_event[day_count].K_pt = K_pt;
+            day_event[day_count].J_pt = J_pt;
+            day_count++;
+        }
+    }
+
+    fclose(fp);
+
+    return day_count;
+}
+
+// ダイスを振る
 int throw_dice(int max_num){
-    num = rand()%max_num;
+    int num = rand()%max_num;
 	return num;
 }
 
-// $B%2!<%`$N=i4|2=(B
-void init_game(PLAYER){
+// ゲームの初期化
+// p_size : プレイヤーの数
+int init_game(PLAYER *player_list){
+    int p_size;
+    printf("Player size : "),   scanf("%d", &p_size);
+
+    int i;
+    char tmp_name[20];
+    char input_tmp;
+
+    for(i=0; i<p_size; i++){
+        do{
+            printf("Player %d name >> ",i), scanf("%s%*c", tmp_name);
+            printf("Your Name : %s\n Yes:y | No:n >> ", tmp_name), scanf("%c%*c", &input_tmp);
+        }while(!(input_tmp == 'y' || input_tmp == 'Y'));
+
+        strncpy(player_list[i].name, tmp_name, 20);
+        player_list[i].J_pt = DEFAULT_J_PT;
+        player_list[i].K_pt = DEFAULT_K_PT;
+    }
+
+    return p_size;
 }
 
-// $B%@%$%9$r?6$k(B
-int throw_dice(int){
+// プレイヤーを動かす
+void move_player(PLAYER player){
+
 }
 
-// $B%W%l%$%d!<$rF0$+$9(B
-void move_player(PLAYER){
-}
+// イベント発生時にどうにかする
+void switch_event(PLAYER *player_list, int *p_list){
 
-// $B%$%Y%s%HH/@8;~$K$I$&$K$+$9$k(B
-void switch_event(PLAYER, int){
 }

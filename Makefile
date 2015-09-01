@@ -1,11 +1,11 @@
-# $B$-$l$$$J(BMakefile$B$K$7$h$&(B!
+# きれいなMakefileにしよう!
 
 CFLAGS =
 LFLAGS =
 
 CC = gcc $(CFLAGS)
 
-OBJS = main.c event.o tools.o
+OBJS = main.o event.o tools.o
 
 all : main
 
