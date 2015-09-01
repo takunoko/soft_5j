@@ -54,6 +54,7 @@ int load_day_event_data(DAY_EVENT day_event[], char *file_name){
 
 // ダイスを振る
 int throw_dice(int max_num){
+    // エフェクト?とかを作成してゲームっぽく。
     int num = rand()%max_num;
 	return num;
 }
@@ -61,13 +62,26 @@ int throw_dice(int max_num){
 // ゲームの初期化
 // p_size : プレイヤーの数
 int init_game(PLAYER *player_list){
-    int p_size;
-    printf("Player size : "),   scanf("%d", &p_size);
 
+#define DEGUB_INIT_GAME
+#ifdef DEGUB_INIT_GAME
+    int p_size = 3;
     int i;
+    char name_list[][20] = {"aaa","iii","uuu"};
+    for(i=0; i<3; i++){
+        strncpy(player_list[i].name, name_list[i], 20);
+        player_list[i].J_pt = DEFAULT_J_PT;
+        player_list[i].K_pt = DEFAULT_K_PT;
+        player_list[i].position = 0;
+    }
+#else
+    int p_size;
     char tmp_name[20];
     char input_tmp;
 
+    printf("Player size : "),   scanf("%d", &p_size);
+
+    int i;
     for(i=0; i<p_size; i++){
         do{
             printf("Player %d name >> ",i), scanf("%s%*c", tmp_name);
@@ -77,7 +91,9 @@ int init_game(PLAYER *player_list){
         strncpy(player_list[i].name, tmp_name, 20);
         player_list[i].J_pt = DEFAULT_J_PT;
         player_list[i].K_pt = DEFAULT_K_PT;
+        player_list[i].position = 0;
     }
+#endif
 
     return p_size;
 }

@@ -4,6 +4,7 @@
 // プレイヤー構造体
 typedef struct{
 	char name[20];
+    int position;
 	int K_pt;
 	int J_pt;
 	int flg;

@@ -1,7 +1,6 @@
 // #ifdef TOOLS
 // #define TOOLS
 
-// #include "data_set.h"
 // プログラム本体の初期化
 int init_program(int);
 // ゲームの初期化
