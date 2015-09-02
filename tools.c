@@ -1,9 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <unistd.h>  // sleep
+#include <time.h>  // srand初期化
 
 #include "data_set.h"
+#include "event.h"
+
+// はい:いいえ 戻り値 はい=1 いいえ=0
+int yes_no(void){
+    char input;
+    printf("はい:y | いいえ:n >> ");
+    scanf("%c%*c", &input);
+    if(input == 'Y' || input == 'y')
+        return 1;
+    else
+        return 0;
+}
+
+void disp_plyaer_status(PLAYER *player){
+    printf("-----%s-----\n", player->name);
+    printf("課題ポイント : %5d\n", player->K_pt);
+    printf("充実ポイント : %5d\n", player->J_pt);
+}
 
 // プログラム本体の初期化
 void init_program(int tmp){
@@ -99,11 +118,62 @@ int init_game(PLAYER *player_list){
 }
 
 // プレイヤーを動かす
-void move_player(PLAYER player){
+void move_player(DAY_EVENT day_list[], PLAYER *player){
+    int dice;
+    printf("dice...\n");
+    sleep(1);
+    // 最終的には乱数でも、ダイスを振るような動作
+    dice = throw_dice(6), dice+=1;  // 1~6が出るように調整
+    printf("夏休みが %d 日進んだ。\n", dice);
+    sleep(1);
+    player->position += dice;
+    printf("%d日目。\n%s\n", player->position, day_list[player->position].content);
+    player->K_pt += day_list[player->position].K_pt;  // プレイヤーのステータスを増減
+    player->J_pt += day_list[player->position].J_pt;  // プレイヤーのステータスを増減
+    printf("課題ポイント : %5d -> %5d\n",day_list[player->position].K_pt, player->K_pt);
+    printf("充実ポイント : %5d -> %5d\n\n",day_list[player->position].J_pt, player->J_pt);
+}
 
+// イベントに参加するプレイーヤーを決定
+void select_event_player(PLAYER player_list[], int p_size, int *p_list){
+    char input;
+
+    int p_cnt=0;
+    int i;
+    for(i=0; i<p_size; i++){
+        printf("%sはイベントに参加しますか？\n", player_list[i].name);
+        if(yes_no() == 1){
+            p_list[p_cnt] = i;
+            p_cnt++;
+        }
+    }
+    p_list[p_cnt] = -1;  // 最後の参加プレイヤーの後ろに-1を代入しておく
 }
 
 // イベント発生時にどうにかする
-void switch_event(PLAYER *player_list, int *p_list){
+void start_event(PLAYER *player_list, int *p_list){
+    if(p_list[0] == -1){
+        printf("参加者がいなかったため、今回のイベントはスキップされました。\n");
+        return;
+    }
+
+    printf("\n夏の楽しいイベントの始まりです。\n");
+    int event;
+    event = throw_dice(6); // 乱数によりイベントを決定
+    event = 0;  // デバッグ用に1のみを出す
+    switch(event){
+        case 0:
+            e_sea(player_list, p_list);
+            break;
+        case 1:
+            e_bbq(player_list, p_list);
+            break;
+        case 2:
+            e_mountain(player_list, p_list);
+            break;
+        default:
+            printf("何かおかしい...");
+            break;
+    }
 
 }

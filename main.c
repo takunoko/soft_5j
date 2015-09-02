@@ -31,22 +31,16 @@ void game_main(DAY_EVENT day_list[], int day_size, PLAYER player_list[], int pla
 
     while(1){
         int p_cnt;
-        int dice;
+        int move;
         // すべてのプレイヤーが一度行動
         for(p_cnt = 0; p_cnt < player_size; p_cnt++){
             // マップorカレンダー的なものを表示して、プレイヤーの位置を表示したい。
             printf("-----%sのターン-----\n", player_list[p_cnt].name);
-            sleep(1);
-            dice = throw_dice(6), dice+=1;  // 1~6が出るように調整
-            printf("夏休みが %d 日進んだ。\n", dice);
-            player_list[p_cnt].position += dice;
-            sleep(1);
-            printf("%d日目。 %s\n", player_list[p_cnt].position, day_list[player_list[p_cnt].position].content);
-            player_list[p_cnt].K_pt += day_list[player_list[p_cnt].position].K_pt;  // プレイヤーのステータスを増減
-            player_list[p_cnt].J_pt += day_list[player_list[p_cnt].position].J_pt;  // プレイヤーのステータスを増減
-            printf("課題ポイント : %5d -> %5d\n",day_list[player_list[p_cnt].position].K_pt, player_list[p_cnt].K_pt);
-            printf("充実ポイント : %5d -> %5d\n",day_list[player_list[p_cnt].position].J_pt, player_list[p_cnt].J_pt);
+            move_player(day_list, &player_list[p_cnt]);
         }
+        select_event_player(player_list, player_size, mgame_player_list);
+        start_event(player_list, mgame_player_list);
+
         break;
     }
 }
